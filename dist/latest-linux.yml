@@ -1,0 +1,9 @@
+version: 0.9.0
+files:
+  - url: QuickTwitch-0.9.0-x86_64.AppImage
+    sha512: YtDMWx9dKvPcCWt6B//+J4rZzKARQYZKaDrNlSxDOdG5gAHYeNlNmIm3P6PBuUwcIyfL/CDP63Kit+cF1xOIUg==
+    size: 51308667
+    blockMapSize: 53695
+path: QuickTwitch-0.9.0-x86_64.AppImage
+sha512: YtDMWx9dKvPcCWt6B//+J4rZzKARQYZKaDrNlSxDOdG5gAHYeNlNmIm3P6PBuUwcIyfL/CDP63Kit+cF1xOIUg==
+releaseDate: '2018-03-29T22:25:26.256Z'

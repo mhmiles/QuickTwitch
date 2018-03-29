@@ -1,0 +1,9 @@
+version: 0.9.0
+files:
+  - url: QuickTwitch-Setup-0.9.0.exe
+    sha512: xe5bujkCRiQlYibr9vVIw5kjwn34rO5/2n2+eq6qpqid7Cz1ANnoZbyIHfEMhmQhTdSuYCOMGxshS+reo+LVgQ==
+    size: 37042718
+path: QuickTwitch-Setup-0.9.0.exe
+sha512: xe5bujkCRiQlYibr9vVIw5kjwn34rO5/2n2+eq6qpqid7Cz1ANnoZbyIHfEMhmQhTdSuYCOMGxshS+reo+LVgQ==
+sha2: 26919ea4bf017e7db6a2afcdd036296c51b4b3b342ecc931e16cb61f0656570f
+releaseDate: '2018-03-29T22:25:26.256Z'
