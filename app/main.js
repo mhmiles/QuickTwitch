@@ -1,106 +1,179 @@
-import path from 'path';
-import url from 'url';
-import {app, crashReporter, BrowserWindow, Menu} from 'electron';
+import { app, BrowserWindow, Menu, shell } from 'electron';
 
-const isDevelopment = (process.env.NODE_ENV === 'development');
-
+let menu;
+let template;
 let mainWindow = null;
-let forceQuit = false;
 
-const installExtensions = async () => {
-  const installer = require('electron-devtools-installer');
-  const extensions = [
-    'REACT_DEVELOPER_TOOLS',
-    'REDUX_DEVTOOLS'
-  ];
-  const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
-  for (const name of extensions) {
-    try {
-      await installer.default(installer[name], forceDownload);
-    } catch (e) {
-      console.log(`Error installing ${name} extension: ${e.message}`);
-    }
-  }
-};
 
-crashReporter.start({
-  productName: 'YourName',
-  companyName: 'YourCompany',
-  submitURL: 'https://your-domain.com/url-to-submit',
-  uploadToServer: false
-});
+if (process.env.NODE_ENV === 'development') {
+  require('electron-debug')(); // eslint-disable-line global-require
+}
 
 app.on('window-all-closed', () => {
-  // On OS X it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
+  if (process.platform !== 'darwin') app.quit();
 });
 
-app.on('ready', async () => {
-  if (isDevelopment) {
-    await installExtensions();
-  }
 
-  mainWindow = new BrowserWindow({ 
-    width: 1000, 
+app.on('ready', () => {
+  let maxWidth = process.env.NODE_ENV === 'development' ? 1200 : 700;
+
+  mainWindow = new BrowserWindow({
+    show: true,
+    width: 700,
     height: 800,
-    minWidth: 640,
-    minHeight: 480,
-    show: false 
+    minWidth: 200,
+    maxWidth: maxWidth,
+    minHeight: 200,
+    fullscreenable: false
   });
 
-  mainWindow.loadURL(url.format({
-    pathname: path.join(__dirname, 'index.html'),
-    protocol: 'file:',
-    slashes: true
-  }));
-
-  // show window once on first load
-  mainWindow.webContents.once('did-finish-load', () => {
-    mainWindow.show();
-  });
+  mainWindow.loadURL(`file://${__dirname}/index.html`);
 
   mainWindow.webContents.on('did-finish-load', () => {
-    // Handle window logic properly on macOS:
-    // 1. App should not terminate if window has been closed
-    // 2. Click on icon in dock should re-open the window
-    // 3. ⌘+Q should close the window and quit the app
-    if (process.platform === 'darwin') {
-      mainWindow.on('close', function (e) {
-        if (!forceQuit) {
-          e.preventDefault();
-          mainWindow.hide();
-        }
-      });
-
-      app.on('activate', () => {
-        mainWindow.show();
-      });
-      
-      app.on('before-quit', () => {
-        forceQuit = true;
-      });
-    } else {
-      mainWindow.on('closed', () => {
-        mainWindow = null;
-      });
-    }
+    mainWindow.show();
+    mainWindow.focus();
   });
 
-  if (isDevelopment) {
-    // auto-open dev tools
-    mainWindow.webContents.openDevTools();
+  mainWindow.on('closed', () => {
+    mainWindow = null;
+  });
 
-    // add inspect element on right click menu
+  if (process.env.NODE_ENV === 'development') {
+    mainWindow.openDevTools();
     mainWindow.webContents.on('context-menu', (e, props) => {
+      const { x, y } = props;
+
       Menu.buildFromTemplate([{
         label: 'Inspect element',
         click() {
-          mainWindow.inspectElement(props.x, props.y);
+          mainWindow.inspectElement(x, y);
         }
       }]).popup(mainWindow);
     });
+  }
+
+  if (process.platform === 'darwin') {
+    template = [{
+      label: 'QuickTwitch',
+      submenu: [{
+        label: 'About QuickTwitch',
+        selector: 'orderFrontStandardAboutPanel:'
+      }, {
+        type: 'separator'
+      }, {
+        label: 'Services',
+        submenu: []
+      }, {
+        type: 'separator'
+      }, {
+        label: 'Hide QuickTwitch',
+        accelerator: 'Command+H',
+        selector: 'hide:'
+      }, {
+        label: 'Hide Others',
+        accelerator: 'Command+Shift+H',
+        selector: 'hideOtherApplications:'
+      }, {
+        label: 'Show All',
+        selector: 'unhideAllApplications:'
+      }, {
+        type: 'separator'
+      }, {
+        label: 'Quit',
+        accelerator: 'Command+Q',
+        click() {
+          app.quit();
+        }
+      }]
+    }, {
+      label: 'View',
+      submenu: (process.env.NODE_ENV === 'development') ? [{
+        label: 'Reload',
+        accelerator: 'Command+R',
+        click() {
+          mainWindow.webContents.reload();
+        }
+      }, {
+        label: 'Toggle Full Screen',
+        accelerator: 'Ctrl+Command+F',
+        click() {
+          mainWindow.setFullScreen(!mainWindow.isFullScreen());
+        }
+      }, {
+        label: 'Toggle Developer Tools',
+        accelerator: 'Alt+Command+I',
+        click() {
+          mainWindow.toggleDevTools();
+        }
+      }] : [{
+        label: 'Toggle Full Screen',
+        accelerator: 'Ctrl+Command+F',
+        click() {
+          mainWindow.setFullScreen(!mainWindow.isFullScreen());
+        }
+      }]
+    }, {
+      label: 'Window',
+      submenu: [{
+        label: 'Minimize',
+        accelerator: 'Command+M',
+        selector: 'performMiniaturize:'
+      }, {
+        label: 'Close',
+        accelerator: 'Command+W',
+        selector: 'performClose:'
+      }, {
+        type: 'separator'
+      }, {
+        label: 'Bring All to Front',
+        selector: 'arrangeInFront:'
+      }]
+    }];
+
+    menu = Menu.buildFromTemplate(template);
+    Menu.setApplicationMenu(menu);
+  } else {
+    template = [{
+      label: '&File',
+      submenu: [{
+        label: '&Open',
+        accelerator: 'Ctrl+O'
+      }, {
+        label: '&Close',
+        accelerator: 'Ctrl+W',
+        click() {
+          mainWindow.close();
+        }
+      }]
+    }, {
+      label: '&View',
+      submenu: (process.env.NODE_ENV === 'development') ? [{
+        label: '&Reload',
+        accelerator: 'Ctrl+R',
+        click() {
+          mainWindow.webContents.reload();
+        }
+      }, {
+        label: 'Toggle &Full Screen',
+        accelerator: 'F11',
+        click() {
+          mainWindow.setFullScreen(!mainWindow.isFullScreen());
+        }
+      }, {
+        label: 'Toggle &Developer Tools',
+        accelerator: 'Alt+Ctrl+I',
+        click() {
+          mainWindow.toggleDevTools();
+        }
+      }] : [{
+        label: 'Toggle &Full Screen',
+        accelerator: 'F11',
+        click() {
+          mainWindow.setFullScreen(!mainWindow.isFullScreen());
+        }
+      }]
+    }];
+    menu = Menu.buildFromTemplate(template);
+    mainWindow.setMenu(menu);
   }
 });

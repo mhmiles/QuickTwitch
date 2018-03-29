@@ -1,0 +1,14 @@
+.channelList {
+  padding: 0px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  flex: 1;
+  flex-direction: row;
+  flex-wrap: wrap;
+  display:inline-block;
+}
+
+::-webkit-scrollbar {
+    width: 0px;  /* remove scrollbar space */
+    background: transparent;  /* optional: just make scrollbar invisible */
+}

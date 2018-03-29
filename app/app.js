@@ -5,6 +5,10 @@ import { ConnectedRouter } from 'react-router-redux';
 import { createMemoryHistory } from 'history';
 import routes from './routes';
 import configureStore from './store';
+import 'source-map-support/register'
+import './app.global.css';
+import { CATEGORY_TOP } from './actions/channels'
+import { push } from 'react-router-redux'
 
 const syncHistoryWithStore = (store, history) => {
   const { routing } = store.getState();
@@ -14,8 +18,9 @@ const syncHistoryWithStore = (store, history) => {
 };
 
 const initialState = {};
-const routerHistory = createMemoryHistory();
+const routerHistory = createMemoryHistory({ initialEntries: [`/${CATEGORY_TOP}`] });
 const store = configureStore(initialState, routerHistory);
+
 syncHistoryWithStore(store, routerHistory);
 
 const rootElement = document.querySelector(document.currentScript.getAttribute('data-container'));

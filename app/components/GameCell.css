@@ -1,0 +1,78 @@
+.gameCell {
+  display: inline-block;
+  position: relative;
+  margin-bottom: 5px;
+  margin-left: 5px;
+  height: calc((100vw - 15px) / 2 * 18 / 13);
+  width: calc((100vw - 15px) / 2);
+  background-size: cover;
+  background-color: black;
+  overflow: hidden;
+}
+
+.bottomDetails {
+  position: absolute;
+  z-index: 10;
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  bottom: 0;
+  transition: 1s;
+  padding: 5px;
+}
+
+.gameCell:hover .gameName {
+    bottom: auto;
+}
+
+.gameName {
+  position: absolute;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  font-size: 14px;
+  bottom: 100%;
+  padding: 5px;
+}
+
+.channels {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+}
+
+.stats {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+}
+
+.stats span {
+  display: inline-block;
+  height: 14px;
+  line-height: 14px;
+}
+
+.stats svg {
+  fill: white;
+  margin-right: 10px;
+}
+
+@media (min-width: 275px) {
+  .gameCell {
+    height: calc((100vw - 20px) / 3 * 204 / 146);
+    width: calc((100vw - 20px) / 3);
+  }
+}
+
+@media (min-width: 400px) {
+  .gameCell {
+    height: calc((100vw - 25px) / 4 * 204 / 146);
+    width: calc((100vw - 25px) / 4);
+  }
+}
+
+@media (min-width: 500px) {
+  .gameCell {
+    height: calc((100vw - 30px) / 5 * 204 / 146);
+    width: calc((100vw - 30px) / 5);
+  }
+}

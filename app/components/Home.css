@@ -1,0 +1,25 @@
+.home {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  -webkit-user-select: none;
+}
+
+.draggable {
+  -webkit-app-region: drag;
+  height: 20px;
+  width: 100%;
+}
+
+.container {
+  position: absolute;
+  text-align: center;
+}
+
+.container h2 {
+  font-size: 5rem;
+}
+
+.container a {
+  font-size: 1.4rem;
+}
